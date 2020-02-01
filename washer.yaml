@@ -1,0 +1,41 @@
+substitutions:
+  stddev_window_size: '400'
+
+esphome:
+  name: washer
+  platform: ESP8266
+  board: esp01_1m
+  includes:
+    - filters/stddev.h
+
+# Wifi Configuration  
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pwd
+
+# Set the logging level to debug
+logger:
+  level: DEBUG
+
+# Enable Home Assistant API
+api:
+
+# Enable OTA updates
+ota:
+
+i2c:
+  sda: GPIO2
+  scl: GPIO0
+  scan: True
+
+sensor:
+  - platform: mpu6050
+    address: 0x68
+    update_interval: 50ms
+    accel_x:
+      name: "MPU6050 Accel X"
+      filters:
+      - lambda: |-
+          static SlidingWindowStdDevFilter sd($stddev_window_size);
+          return sd.new_value(x);
+    

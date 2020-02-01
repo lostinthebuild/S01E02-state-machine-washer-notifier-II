@@ -1,0 +1,10 @@
+{
+    "domain": "schmitt_trigger",
+    "name": "Schmitt Trigger",
+    "documentation": "https://example.com",
+    "requirements": [],
+    "dependencies": [],
+    "codeowners": [
+        "@madaboutcode"
+    ]
+}

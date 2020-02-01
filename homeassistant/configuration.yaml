@@ -1,0 +1,148 @@
+##########
+# BEWARE: just contains the relevant snippets from the config. 
+# NOT a complete configuration file
+#########
+
+
+# influx db - for recording sensor readings. optional - but useful for analysis with grafana
+influxdb:
+  host: localhost
+  port: 8086
+  database: hass
+  tags:
+    source: hass
+  tags_attributes:
+    - friendly_name
+
+# telegram bot configuration if you are using it. 
+# ref: https://www.home-assistant.io/integrations/telegram_broadcast/
+telegram_bot:
+  - platform: broadcast
+    api_key: !secret telegram_api_key
+    allowed_chat_ids:
+      - 12345
+
+# alexa configuration
+# need alexa_media custom component to be installed. 
+# see: https://github.com/custom-components/alexa_media_player
+alexa_media:
+  accounts:
+    - email: !secret amazon_username
+      password: !secret amazon_password
+      url: amazon.in
+      include_devices:
+        - "Living Room Echo"
+
+
+sensors:
+  - platform: template
+    sensors:
+      washing_machine_vibration:
+        friendly_name: "Washer Vibration Band"
+        value_template: >-
+          {% if is_state('sensor.mpu6050_accel_x', 'unavailable') %}
+            unknown
+          {% else %}
+            {% if states('sensor.mpu6050_accel_x') | float < 0.10 %}
+              {% if states('sensor.mpu6050_accel_x') | float > 0.045 %}
+                washing
+              {% else %}
+                idle
+              {% endif %}
+            {% else %}
+              spinning
+            {% endif %}
+          {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # the schmitt trigger sensor configuration
+  - platform: schmitt_trigger
+    name: Washer Vibration Schmitt Band
+    id: washingmac_vibration_schmitt
+    entity_id: sensor.mpu6050_accel_x
+    ranges: 
+    # tweak these ranges based on vibration levels from your washer. 
+    - name: idle
+    - name: washing
+      utp: 0.06
+      ltp: 0.045
+    - name: spinning
+      utp: 0.11
+      ltp: 0.09
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# notification service configuration
+notify:
+  - name: telegram_user1
+    platform: telegram
+    chat_id: 12345
+
+  - name: alexa_media
+    platform: alexa_media
+
+    # google home configuration
+    # you will need to setup google assistant relay from here: https://github.com/greghesp/assistant-relay
+  - name: google_home_broadcast
+    platform: rest
+    resource: http://<relay-url>/assistant
+    method: POST_JSON
+    message_param_name: command
+    data:
+     user: hass
+     broadcast: true
+
+    # notification group for all the smart speakers in the home 
+  - name: all_speakers
+    platform: group
+    services:
+      - service: alexa_media
+        data:
+          data: { type: announce, method: all }
+          target: 
+            - media_player.living_room_echo
+      - service: google_home_broadcast
+
+    # notification group for notifying everyone
+  - name: all_house_residents
+    platform: group
+    services:
+      - service: telegram_user1
+      - service: all_speakers
+      # you can add more notification services if you need to
+
+

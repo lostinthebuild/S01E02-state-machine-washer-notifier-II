@@ -1,0 +1,9 @@
+{
+    "yaml.customTags": [
+        "!secret scalar"
+    ],
+    "yaml.validate": true,
+    "editor.fontSize": 12,
+    "window.zoomLevel": 2,
+    "python.pythonPath": ".direnv/python-3.8.0/bin/python3"
+}

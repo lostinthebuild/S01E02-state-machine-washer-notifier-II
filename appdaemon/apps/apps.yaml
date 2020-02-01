@@ -1,0 +1,7 @@
+global_modules:
+  - statemachine
+
+washingmachine:
+ module: washingmac
+ class: WashingMachine
+ global_dependencies: statemachine
