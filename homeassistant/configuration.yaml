@@ -125,7 +125,7 @@ notify:
     data:
      user: hass
      broadcast: true
-
+     
     # notification group for all the smart speakers in the home 
   - name: all_speakers
     platform: group

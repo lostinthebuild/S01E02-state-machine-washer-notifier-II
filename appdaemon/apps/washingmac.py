@@ -91,12 +91,7 @@ class WashingMachine(hass.Hass):
         # trigger notification
         if to_state == DONE:
             self.notify("Laundy Done", "Laundry is complete. You may take the clothes")
-        # elif to_state == ERROR:
-        #     self.notify(
-        #         "Possible problem with Laundry",
-        #         "There might be a problem with the laundry. Your attention is required",
-        #     )
-
+        
     def _state_callback(self, unused_entity, unused_attribute, unused_old, new, unused_kwargs):
         self.log(
             "{}: {} [state: {}]".format(VIBRATION_SENSOR, new, self.machine.current_state.name)
