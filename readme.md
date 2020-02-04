@@ -58,12 +58,27 @@ digraph G {
 
 ## Additional info
 
-_WIP_
+In case you are planning to build this, here are a few things to help you along the way. 
+
+1. The vibration levels and the timeouts between the various states is highly dependent on the washer, how you place the sensor and other factors. So you will need to tweak it based on actual readings from the washer. 
+2. Configure influxdb and grafana with home assistant and setup a (dashboard for the washer)[grafana-washer-dashboard.png] related sensors. It was a tremendous help for me to tweak the thresholds and timeouts. [Json export of my dashboard](grafana-washer-dashboard.json). 
+3. Stick with it for a couple of days while you tweak the values. Try different types of wash cycles (hot, cold, cotton, whatever else you use in your home) and tweak the values. It was helpful for me to configure the notifications to just come to me (I used the telegram integration) while I was working on it. Once it is setup properly, it is zero maintenance and works beautifully. 
+4. For the privacy conscious amoung us, use a different notification mechanism that is more privacy friendly like a buzzer or even an offline text to speech based one. Drop me a note if you are interested seeing a build video for one. I have some plans for such a device in my notes. 
+
+## Improvements
+
+You could add a door open sensor using one of those reed switches or something similar and wire it to the ESP-01. Modify the state machine to take this into account and have a "pending_clearance" 😊 or something similar and send out notifications periodically until the washer is emptied.
 
 ## Links:
 
 * [Schematic](http://bit.ly/2rf4BGa)
 * [State Diagram](https://github.com/lostinthebuild/S01E02-state-machine-washer-notifier-II/blob/master/state-diagram.png)
+*  [Home Assistant - Google Assistant Integration using Assistant Relay](https://community.home-assistant.io/t/component-to-send-commands-to-google-assistant/134156)
+*  [Home Assistant - Alexa Integration](https://github.com/custom-components/alexa_media_player)
+*  [Home Assistant Configuration](https://github.com/lostinthebuild/S01E02-state-machine-washer-notifier-II/tree/master/homeassistant)
+*  [AppDaemon Automation Apps](https://github.com/lostinthebuild/S01E02-state-machine-washer-notifier-II/tree/master/appdaemon/apps) 
+* [EspHome Configuration](https://github.com/lostinthebuild/S01E02-state-machine-washer-notifier-II/blob/master/washer.yaml)
+
 ### Aliexpress:
 * [Female Micro USB Connector](http://s.click.aliexpress.com/e/CWPZ2ZrS)
 * [Small Box](http://s.click.aliexpress.com/e/BXgpWTYM)
@@ -72,7 +87,3 @@ _WIP_
 * [ESP-01 Programmer](http://s.click.aliexpress.com/e/qNMsgQBm)
 * [3.3V regulator](http://s.click.aliexpress.com/e/DyoqPbhW)
 * [Veroboard](http://s.click.aliexpress.com/e/FnTQdduy)
-
-## TODO
-- [ ] HA - custom components installation instructions - readme
-- [ ] update this readme file with part II details
