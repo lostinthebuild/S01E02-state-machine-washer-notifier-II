@@ -1,7 +1,7 @@
 # Washer Notifier
 
-> Source code accompanying the videos 
-> Part 1 (hardware, esphome etc) : <https://www.youtube.com/watch?v=atD7VcXrfWY>
+> Source code and configuration accompanying the videos <br />
+> Part 1 (hardware, esphome etc) : <https://www.youtube.com/watch?v=atD7VcXrfWY>  <br/>
 > Part 2 (home assistant automation, appdaemon etc) : <https://youtu.be/t5eoUQmB4SA>
 
 Leaving the clothes in the washer for too long? Need a way to detect when the washer is done?
@@ -24,6 +24,38 @@ In part II, I walk you through the design and implementation of a state machine 
 
 All the code, configurations and schematics are in the repository. 
 
+## State Diagram
+
+![State Diagram](state-diagram.png)
+
+[dot diagram viewer](https://dreampuf.github.io/GraphvizOnline/#digraph%20G%20%7B%0A%20%20%20%20graph%20%5Bfontname%20%3D%20%22DigitalStrip%20BB%22%5D%3B%0A%20%20%20%20node%20%5Bfontname%20%3D%20%22DigitalStrip%20BB%22%2C%20fillcolor%3D%22%23EEEEEE%3B0%3A%23D8D8D8%3B1.0%22%2C%20style%3Dfilled%2C%20gradientangle%3D270%5D%3B%0A%20%20%20%20edge%20%5Bfontname%20%3D%20%22DigitalStrip%20BB%22%5D%3B%0A%20%20%20%20IDLE-%3EMAYBE_WASHING%5Blabel%3D%22wash%2C%20spin%22%5D%3B%0A%20%20%20%20ERROR-%3EMAYBE_WASHING%5Blabel%3D%22wash%5Cn%20%20spin%22%5D%3B%0A%20%20%20%20DONE-%3EMAYBE_WASHING%5Blabel%3D%22%20%20%20wash%2C%20spin%22%5D%3B%0A%20%20%20%20MAYBE_WASHING-%3EWASHING%5Blabel%3D%22timeout%201%20min%22%5D%3B%0A%20%20%20%20MAYBE_WASHING-%3EMAYBE_IDLE%5Blabel%3D%22idle%22%5D%3B%0A%20%20%20%20MAYBE_IDLE-%3EIDLE%5Blabel%3D%22timeout%205%20min%22%5D%3B%0A%20%20%20%20MAYBE_IDLE-%3EMAYBE_WASHING%5Blabel%3D%22wash%5Cn%20spin%22%5D%3B%0A%20%20%20%20WASHING-%3ESPINNING%5Blabel%3D%22%20%20spin%22%5D%3B%0A%20%20%20%20WASHING-%3EMAYBE_ERROR%5Blabel%3D%22idle%22%5D%3B%0A%20%20%20%20SPINNING-%3EMAYBE_DONE%5Blabel%3D%22%20idle%20%20%22%5D%3B%0A%20%20%20%20SPINNING-%3EWASHING%5Blabel%3D%22%5Cn%5Cn%20%20wash%22%5D%3B%0A%20%20%20%20MAYBE_DONE-%3EWASHING%5Blabel%3D%22%20%20wash%22%5D%3B%0A%20%20%20%20MAYBE_DONE-%3ESPINNING%5Blabel%3D%22%5Cn%5Cn%20%20spin%22%5D%3B%0A%20%20%20%20MAYBE_DONE-%3EDONE%5Blabel%3D%22timeout%208%20min%22%5D%3B%0A%20%20%20%20MAYBE_ERROR-%3EWASHING%5Blabel%3D%22wash%22%5D%3B%0A%20%20%20%20MAYBE_ERROR-%3ESPINNING%5Blabel%3D%22spin%22%5D%3B%0A%20%20%20%20MAYBE_ERROR-%3EERROR%5Blabel%3D%22%5Cn%5Cntimeout%2030%20min%22%5D%3B%0A%7D)
+
+### Graphviz Diagram
+```
+digraph G {
+    graph [fontname = "DigitalStrip BB"];
+    node [fontname = "DigitalStrip BB", fillcolor="#EEEEEE;0:#D8D8D8;1.0", style=filled, gradientangle=270];
+    edge [fontname = "DigitalStrip BB"];
+    IDLE->MAYBE_WASHING[label="wash, spin"];
+    ERROR->MAYBE_WASHING[label="wash\n  spin"];
+    DONE->MAYBE_WASHING[label="   wash, spin"];
+    MAYBE_WASHING->WASHING[label="timeout 1 min"];
+    MAYBE_WASHING->MAYBE_IDLE[label="idle"];
+    MAYBE_IDLE->IDLE[label="timeout 5 min"];
+    MAYBE_IDLE->MAYBE_WASHING[label="wash\n spin"];
+    WASHING->SPINNING[label="  spin"];
+    WASHING->MAYBE_ERROR[label="idle"];
+    SPINNING->MAYBE_DONE[label=" idle  "];
+    SPINNING->WASHING[label="\n\n  wash"];
+    MAYBE_DONE->WASHING[label="  wash"];
+    MAYBE_DONE->SPINNING[label="\n\n  spin"];
+    MAYBE_DONE->DONE[label="timeout 8 min"];
+    MAYBE_ERROR->WASHING[label="wash"];
+    MAYBE_ERROR->SPINNING[label="spin"];
+    MAYBE_ERROR->ERROR[label="\n\ntimeout 75 min"];
+}
+```
+
 ## Additional info
 
 _WIP_
@@ -31,7 +63,7 @@ _WIP_
 ## Links:
 
 * [Schematic](http://bit.ly/2rf4BGa)
-
+* [State Diagram](https://github.com/lostinthebuild/S01E02-state-machine-washer-notifier-II/blob/master/state-diagram.png)
 ### Aliexpress:
 * [Female Micro USB Connector](http://s.click.aliexpress.com/e/CWPZ2ZrS)
 * [Small Box](http://s.click.aliexpress.com/e/BXgpWTYM)
