@@ -52,7 +52,7 @@ prompt-toolkit==3.0.3
 protobuf==3.6.1
 ptyprocess==0.6.0
 pyaes==1.6.1
-Pygments==2.5.2
+Pygments==2.7.4
 pyrsistent==0.15.7
 pyserial==3.4
 python-dateutil==2.8.1
